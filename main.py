@@ -113,12 +113,13 @@ def start_the_game():
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
                 running = False
             screen.blit(background_image, (0, 0))
             level.draw()
             player.update()
             pygame.display.flip()
-    pygame.quit()
 
 
 def about_function():
@@ -134,18 +135,19 @@ menu = pygame_menu.Menu('Добро пожаловать', 400, 300,
 menu.add.text_input('Имя: ', default='User')
 menu.add.button(' Об игре', about_function)
 menu.add.button('Начать игру', start_the_game)
-
-while True:
+running = True
+while running:
 
     screen.blit(fon, (0, 0))
-
     events = pygame.event.get()
     for event in events:
         if event.type == pygame.QUIT:
             running = False
 
-    if menu.is_enabled():
+    if running and menu.is_enabled():
         menu.update(events)
         menu.draw(screen)
 
     pygame.display.update()
+
+pygame.quit()
