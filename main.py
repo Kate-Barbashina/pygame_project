@@ -47,30 +47,33 @@ def start_the_game():
             self.img_rect = self.img.get_rect()
             self.img_rect.x = x
             self.img_rect.y = y
+            self.width = self.img.get_width()
+            self.height = self.img.get_height()
             self.speed_y = 0
             self.f = 0
 
         def update(self):
             dx = 0
             dy = 0
+
             key = pygame.key.get_pressed()
             if key[pygame.K_LEFT]:
-                dx -= 5
+                dx -= 10
             if key[pygame.K_RIGHT]:
-                dx += 5
-            if key[pygame.K_SPACE] and self.f == 0:
-                self.speed_y = -15
-                self.f = 1
-            if not key[pygame.K_SPACE]:
-                self.f = 1
-            if self.f == 0:
-                self.speed_y += 5
-                if self.speed_y > 10:
-                    self.speed_y = 10
-                dy += self.speed_y
-            if self.img_rect.bottom > 800:
-                dy = 0
-                self.img_rect.bottom = 800
+                dx += 10
+            if key[pygame.K_SPACE]:
+                dy -= 25
+
+            # checking
+            for tile in level.cloud:
+                # in x coordinates
+                if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
+                    dx = 0
+                # in y coordinates
+                if tile[1].colliderect(self.img_rect.x, self.img_rect.y + dy, self.width, self.height):
+                    # if below the ground
+                    dy = tile[1].bottom - self.img_rect.top
+
             self.img_rect.x += dx
             self.img_rect.y += dy
             screen.blit(self.img, self.img_rect)
@@ -78,9 +81,9 @@ def start_the_game():
     class Level:
         def __init__(self):
             self.cloud = []
-            block_image = load_image('dirt1.png')
+            block_image = load_image('dirt2.png')
             img1 = pygame.transform.scale(block_image, (50, 50))
-            dirt_image = load_image('block1.png')
+            dirt_image = load_image('block2.png')
             img = pygame.transform.scale(dirt_image, (50, 50))
             leve = load_level('level1.txt')
             r = 0
@@ -105,6 +108,7 @@ def start_the_game():
         def draw(self):
             for tile in self.cloud:
                 screen.blit(tile[0], tile[1])
+                # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
     player = Player(100, 800 - 130)
     level = Level()
