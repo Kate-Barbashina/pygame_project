@@ -1,11 +1,12 @@
 import os
 import sys
 
-
 import pygame
 import pygame_menu
 
 pygame.init()
+clock = pygame.time.Clock()
+fps = 30
 screen = pygame.display.set_mode((500, 600))
 fon = pygame.image.load('fon.jpg')
 
@@ -50,19 +51,28 @@ def start_the_game():
             self.width = self.img.get_width()
             self.height = self.img.get_height()
             self.speed_y = 0
-            self.f = 0
+            self.f = 1  # hero didn't jump
 
         def update(self):
             dx = 0
             dy = 0
-
+            # keypress
             key = pygame.key.get_pressed()
             if key[pygame.K_LEFT]:
-                dx -= 10
+                dx -= 5
             if key[pygame.K_RIGHT]:
-                dx += 10
-            if key[pygame.K_SPACE]:
-                dy -= 25
+                dx += 5
+            if key[pygame.K_SPACE] and self.f == 1:
+                self.speed_y = -15
+                self.f = 0
+            if not key[pygame.K_SPACE]:
+                self.f = 1
+
+            # gravity
+            self.speed_y += 1
+            if self.speed_y > 10:
+                self.speed_y = 10
+            dy += self.speed_y
 
             # checking
             for tile in level.cloud:
@@ -71,8 +81,14 @@ def start_the_game():
                     dx = 0
                 # in y coordinates
                 if tile[1].colliderect(self.img_rect.x, self.img_rect.y + dy, self.width, self.height):
-                    # if below the ground
-                    dy = tile[1].bottom - self.img_rect.top
+                    # jumping
+                    if self.speed_y < 0:
+                        dy = tile[1].bottom - self.img_rect.top
+                        self.speed_y = 0  # speed = 0 because we get in a normal state after jump
+                    # falling
+                    else:
+                        dy = tile[1].top - self.img_rect.bottom
+                        self.speed_y = 0
 
             self.img_rect.x += dx
             self.img_rect.y += dy
@@ -120,10 +136,11 @@ def start_the_game():
                 pygame.quit()
                 sys.exit()
                 running = False
-            screen.blit(background_image, (0, 0))
-            level.draw()
-            player.update()
-            pygame.display.flip()
+        clock.tick(fps)
+        screen.blit(background_image, (0, 0))
+        level.draw()
+        player.update()
+        pygame.display.flip()
 
 
 def about_function():
