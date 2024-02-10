@@ -8,7 +8,7 @@ pygame.init()
 clock = pygame.time.Clock()
 fps = 30
 screen = pygame.display.set_mode((500, 600))
-fon = pygame.image.load('fon.jpg')
+fon = pygame.image.load('data/fon.jpg')
 
 
 def start_the_game():
@@ -38,13 +38,15 @@ def start_the_game():
             image = image.convert_alpha()
         return image
 
-    player_image = load_image('creature.png')
+    player_image = load_image('player_1.png')
     background_image = load_image('backgr.png')
 
     class Player:
         def __init__(self, x, y):
-            player_image = load_image('creature.png')
+            player_image = load_image('player_1.png')
             self.img = pygame.transform.scale(player_image, (40, 80))
+            player_image_n = load_image('player_1_n.png')
+            self.img_n = pygame.transform.scale(player_image_n, (40, 80))
             self.img_rect = self.img.get_rect()
             self.img_rect.x = x
             self.img_rect.y = y
@@ -52,6 +54,7 @@ def start_the_game():
             self.height = self.img.get_height()
             self.speed_y = 0
             self.f = 1  # hero didn't jump
+            self.flag_n = True
 
         def update(self):
             dx = 0
@@ -60,7 +63,9 @@ def start_the_game():
             key = pygame.key.get_pressed()
             if key[pygame.K_LEFT]:
                 dx -= 5
+                self.flag_n = False
             if key[pygame.K_RIGHT]:
+                self.flag_n = True
                 dx += 5
             if key[pygame.K_SPACE] and self.f == 1:
                 self.speed_y = -15
@@ -92,7 +97,10 @@ def start_the_game():
 
             self.img_rect.x += dx
             self.img_rect.y += dy
-            screen.blit(self.img, self.img_rect)
+            if self.flag_n:
+                screen.blit(self.img, self.img_rect)
+            else:
+                screen.blit(self.img_n, self.img_rect)
 
     class Level:
         def __init__(self):
@@ -101,6 +109,10 @@ def start_the_game():
             img1 = pygame.transform.scale(block_image, (50, 50))
             dirt_image = load_image('block2.png')
             img = pygame.transform.scale(dirt_image, (50, 50))
+            water_image = load_image('water.png')
+            img_w = pygame.transform.scale(water_image, (50, 50))
+            #water_dop_image = load_image('water_dop.png')
+            # img_w1 = pygame.transform.scale(water_dop_image, (50, 50))
             leve = load_level('level1.txt')
             r = 0
             for y in range(len(leve)):
@@ -118,6 +130,18 @@ def start_the_game():
                         img1_rect.y = r * 50
                         tile = (img1, img1_rect)
                         self.cloud.append(tile)
+                    if leve[y][x] == '*':
+                        imgw_rect = img.get_rect()
+                        imgw_rect.x = c * 50
+                        imgw_rect.y = r * 50
+                        tile = (img_w, imgw_rect)
+                        self.cloud.append(tile)
+                    #if leve[y][x] == '#':
+                        #imgw1_rect = img.get_rect()
+                        #imgw1_rect.x = c * 50
+                       # imgw1_rect.y = r * 50
+                       # tile = (img_w1, imgw1_rect)
+                        #self.cloud.append(tile)
                     c += 1
                 r += 1
 
