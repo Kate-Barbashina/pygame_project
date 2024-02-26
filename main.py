@@ -38,10 +38,11 @@ def start_the_game():
             image = image.convert_alpha()
         return image
 
-    player_image = load_image('player_1.png')
+    player_1_image = load_image('player_1.png')
+    player_2_image = load_image('player_2.png')
     background_image = load_image('backgr.png')
 
-    class Player:
+    class Player_1:
         def __init__(self, x, y):
             player_image = load_image('player_1.png')
             self.img = pygame.transform.scale(player_image, (40, 80))
@@ -67,10 +68,10 @@ def start_the_game():
             if key[pygame.K_RIGHT]:
                 self.flag_n = True
                 dx += 5
-            if key[pygame.K_SPACE] and self.f == 1:
+            if key[pygame.K_UP] and self.f == 1:
                 self.speed_y = -15
                 self.f = 0
-            if not key[pygame.K_SPACE]:
+            if not key[pygame.K_UP]:
                 self.f = 1
 
             # gravity
@@ -101,6 +102,68 @@ def start_the_game():
                 screen.blit(self.img, self.img_rect)
             else:
                 screen.blit(self.img_n, self.img_rect)
+
+    class Player_2:
+        def __init__(self, x, y):
+            player_image = load_image('player_2.png')
+            self.img = pygame.transform.scale(player_image, (40, 80))
+            player_image_n = load_image('player_2_n.png')
+            self.img_n = pygame.transform.scale(player_image_n, (40, 80))
+            self.img_rect = self.img.get_rect()
+            self.img_rect.x = x
+            self.img_rect.y = y
+            self.width = self.img.get_width()
+            self.height = self.img.get_height()
+            self.speed_y = 0
+            self.f = 1  # hero didn't jump
+            self.flag_n = True
+
+        def update(self):
+            dx = 0
+            dy = 0
+            # keypress
+            key = pygame.key.get_pressed()
+            if key[pygame.K_a]:
+                dx -= 5
+                self.flag_n = False
+            if key[pygame.K_d]:
+                self.flag_n = True
+                dx += 5
+            if key[pygame.K_w] and self.f == 1:
+                self.speed_y = -15
+                self.f = 0
+            if not key[pygame.K_w]:
+                self.f = 1
+
+            # gravity
+            self.speed_y += 1
+            if self.speed_y > 10:
+                self.speed_y = 10
+            dy += self.speed_y
+
+            # checking
+            for tile in level.cloud:
+                # in x coordinates
+                if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
+                    dx = 0
+                # in y coordinates
+                if tile[1].colliderect(self.img_rect.x, self.img_rect.y + dy, self.width, self.height):
+                    # jumping
+                    if self.speed_y < 0:
+                        dy = tile[1].bottom - self.img_rect.top
+                        self.speed_y = 0  # speed = 0 because we get in a normal state after jump
+                    # falling
+                    else:
+                        dy = tile[1].top - self.img_rect.bottom
+                        self.speed_y = 0
+
+            self.img_rect.x += dx
+            self.img_rect.y += dy
+            if self.flag_n:
+                screen.blit(self.img, self.img_rect)
+            else:
+                screen.blit(self.img_n, self.img_rect)
+
 
     class Level:
         def __init__(self):
@@ -150,7 +213,8 @@ def start_the_game():
                 screen.blit(tile[0], tile[1])
                 # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
-    player = Player(100, 800 - 130)
+    player_1 = Player_1(100, 800 - 130)
+    player_2 = Player_2(130, 800 - 130)
     level = Level()
 
     running = True
@@ -163,7 +227,8 @@ def start_the_game():
         clock.tick(fps)
         screen.blit(background_image, (0, 0))
         level.draw()
-        player.update()
+        player_1.update()
+        player_2.update()
         pygame.display.flip()
 
 
