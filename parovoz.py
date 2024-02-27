@@ -2,13 +2,13 @@ import os
 import sys
 import pygame
 
-# Изображение не получится загрузить
-# без предварительной инициализации pygame
-pygame.init()
-size = width, height = 500, 500
-screen = pygame.display.set_mode(size)
+    # Изображение не получится загрузить
+    # без предварительной инициализации pygame
+    pygame.init()
+    size = width, height = 500, 500
+    screen = pygame.display.set_mode(size)
 
-# создадим группу, содержащую все спрайты
+    # создадим группу, содержащую все спрайты
 all_sprites = pygame.sprite.Group()
 
 # создадим спрайт

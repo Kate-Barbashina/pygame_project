@@ -9,12 +9,15 @@ clock = pygame.time.Clock()
 fps = 30
 screen = pygame.display.set_mode((500, 600))
 fon = pygame.image.load('data/fon.jpg')
-
+number_1 = 0
+num_level = 1
+number_2 = 0
 
 def start_the_game():
     pygame.init()
     size = width, height = 800, 800
     screen = pygame.display.set_mode(size)
+
 
     def load_level(filename):
         filename = "data/" + filename
@@ -38,12 +41,17 @@ def start_the_game():
             image = image.convert_alpha()
         return image
 
+    global num_level
     player_1_image = load_image('player_1.png')
     player_2_image = load_image('player_2.png')
-    backgr_image = load_image('backgr0.jpg')
+    backgr_image = load_image(f'backgr{num_level}.jpg')
     background_image = pygame.transform.scale(backgr_image, (800, 800))
     crystal_image = load_image('kristal.png')
+    water_image = load_image('water.png')
     img_c = pygame.transform.scale(crystal_image, (40, 80))
+    img_w = pygame.transform.scale(water_image, (40, 80))
+
+
 
     class Player_1:
         def __init__(self, x, y):
@@ -61,6 +69,7 @@ def start_the_game():
             self.flag_n = True
 
         def update(self):
+            global number_1
             dx = 0
             dy = 0
             # keypress
@@ -90,6 +99,12 @@ def start_the_game():
                 if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
                     if tile[0] == img_c:
                         fl = 1
+                        number_1 = 1
+                    else:
+                        dx = 0
+                if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
+                    if tile[0] == img_w:
+                        lose_game()
                     else:
                         dx = 0
                 # in y coordinates
@@ -126,6 +141,7 @@ def start_the_game():
             self.flag_n = True
 
         def update(self):
+            global number_2
             dx = 0
             dy = 0
             # keypress
@@ -155,6 +171,12 @@ def start_the_game():
                 if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
                     if tile[0] == img_c:
                         fl = 1
+                        number_2 = 1
+                    else:
+                        dx = 0
+                if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
+                    if tile[0] == img_w:
+                        lose_game()
                     else:
                         dx = 0
                 # in y coordinates
@@ -175,19 +197,18 @@ def start_the_game():
             else:
                 screen.blit(self.img_n, self.img_rect)
 
-
     class Level:
-        def __init__(self):
+        def __init__(self, n):
             self.cloud = []
-            block_image = load_image('dirt0.png')
+            block_image = load_image(f'dirt{n}.png')
             img1 = pygame.transform.scale(block_image, (50, 50))
-            dirt_image = load_image('block0.png')
+            dirt_image = load_image(f'block{n}.png')
             img = pygame.transform.scale(dirt_image, (50, 50))
             water_image = load_image('water.png')
             img_w = pygame.transform.scale(water_image, (50, 50))
             #water_dop_image = load_image('water_dop.png')
             # img_w1 = pygame.transform.scale(water_dop_image, (50, 50))
-            leve = load_level('level1.txt')
+            leve = load_level(f'level{n}.txt')
             r = 0
             for y in range(len(leve)):
                 c = 0
@@ -230,9 +251,12 @@ def start_the_game():
                 screen.blit(tile[0], tile[1])
                 # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
+    global number_1
+    global number_2
+
     player_1 = Player_1(100, 800 - 130)
     player_2 = Player_2(130, 800 - 130)
-    level = Level()
+    level = Level(num_level)
 
     running = True
     while running:
@@ -241,12 +265,26 @@ def start_the_game():
                 pygame.quit()
                 sys.exit()
                 running = False
+        if number_1 == 1 and number_2 == 1:
+            num_level += 1
+            number_1 = 0
+            number_2 = 0
+            level = Level(num_level)
+            player_1 = Player_1(100, 800 - 130)
+            player_2 = Player_2(130, 800 - 130)
+
         clock.tick(fps)
         screen.blit(background_image, (0, 0))
         level.draw()
         player_1.update()
         player_2.update()
         pygame.display.flip()
+
+    def lose_game():
+        pass
+
+    def win_gane()
+        pass
 
 
 def about_function():
