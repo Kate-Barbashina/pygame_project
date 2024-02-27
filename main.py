@@ -40,7 +40,10 @@ def start_the_game():
 
     player_1_image = load_image('player_1.png')
     player_2_image = load_image('player_2.png')
-    background_image = load_image('backgr.png')
+    backgr_image = load_image('backgr0.jpg')
+    background_image = pygame.transform.scale(backgr_image, (800, 800))
+    crystal_image = load_image('kristal.png')
+    img_c = pygame.transform.scale(crystal_image, (40, 80))
 
     class Player_1:
         def __init__(self, x, y):
@@ -69,7 +72,7 @@ def start_the_game():
                 self.flag_n = True
                 dx += 5
             if key[pygame.K_UP] and self.f == 1:
-                self.speed_y = -15
+                self.speed_y = -12
                 self.f = 0
             if not key[pygame.K_UP]:
                 self.f = 1
@@ -80,11 +83,15 @@ def start_the_game():
                 self.speed_y = 10
             dy += self.speed_y
 
+            fl = 0
             # checking
             for tile in level.cloud:
                 # in x coordinates
                 if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
-                    dx = 0
+                    if tile[0] == img_c:
+                        fl = 1
+                    else:
+                        dx = 0
                 # in y coordinates
                 if tile[1].colliderect(self.img_rect.x, self.img_rect.y + dy, self.width, self.height):
                     # jumping
@@ -130,7 +137,7 @@ def start_the_game():
                 self.flag_n = True
                 dx += 5
             if key[pygame.K_w] and self.f == 1:
-                self.speed_y = -15
+                self.speed_y = -12
                 self.f = 0
             if not key[pygame.K_w]:
                 self.f = 1
@@ -141,11 +148,15 @@ def start_the_game():
                 self.speed_y = 10
             dy += self.speed_y
 
+            fl = 0
             # checking
             for tile in level.cloud:
                 # in x coordinates
                 if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
-                    dx = 0
+                    if tile[0] == img_c:
+                        fl = 1
+                    else:
+                        dx = 0
                 # in y coordinates
                 if tile[1].colliderect(self.img_rect.x, self.img_rect.y + dy, self.width, self.height):
                     # jumping
@@ -168,9 +179,9 @@ def start_the_game():
     class Level:
         def __init__(self):
             self.cloud = []
-            block_image = load_image('dirt2.png')
+            block_image = load_image('dirt0.png')
             img1 = pygame.transform.scale(block_image, (50, 50))
-            dirt_image = load_image('block2.png')
+            dirt_image = load_image('block0.png')
             img = pygame.transform.scale(dirt_image, (50, 50))
             water_image = load_image('water.png')
             img_w = pygame.transform.scale(water_image, (50, 50))
@@ -192,6 +203,12 @@ def start_the_game():
                         img1_rect.x = c * 50
                         img1_rect.y = r * 50
                         tile = (img1, img1_rect)
+                        self.cloud.append(tile)
+                    if leve[y][x] == '3':
+                        imgc_rect = img.get_rect()
+                        imgc_rect.x = c * 50
+                        imgc_rect.y = r * 50
+                        tile = (img_c, imgc_rect)
                         self.cloud.append(tile)
                     if leve[y][x] == '*':
                         imgw_rect = img.get_rect()
