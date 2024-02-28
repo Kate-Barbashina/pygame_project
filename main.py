@@ -18,6 +18,12 @@ def start_the_game():
     size = width, height = 800, 800
     screen = pygame.display.set_mode(size)
 
+    def lose_game():
+        print('tilt')
+
+    def win_gane():
+        print('12334')
+
 
     def load_level(filename):
         filename = "data/" + filename
@@ -199,7 +205,10 @@ def start_the_game():
 
     class Level:
         def __init__(self, n):
+            nonlocal background_image
             self.cloud = []
+            backgr_image = load_image(f'backgr{n}.jpg')
+            background_image = pygame.transform.scale(backgr_image, (800, 800))
             block_image = load_image(f'dirt{n}.png')
             img1 = pygame.transform.scale(block_image, (50, 50))
             dirt_image = load_image(f'block{n}.png')
@@ -251,6 +260,7 @@ def start_the_game():
                 screen.blit(tile[0], tile[1])
                 # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
+
     global number_1
     global number_2
 
@@ -267,11 +277,17 @@ def start_the_game():
                 running = False
         if number_1 == 1 and number_2 == 1:
             num_level += 1
+            if num_level == 2:
+                player_1 = Player_1(100, 800 - 130)
+                player_2 = Player_2(660, 800 - 130)
+            else:
+                player_1 = Player_1(100, 800 - 130)
+                player_2 = Player_2(130, 800 - 130)
             number_1 = 0
             number_2 = 0
             level = Level(num_level)
-            player_1 = Player_1(100, 800 - 130)
-            player_2 = Player_2(130, 800 - 130)
+        if num_level == 3:
+            win_game()
 
         clock.tick(fps)
         screen.blit(background_image, (0, 0))
@@ -280,16 +296,30 @@ def start_the_game():
         player_2.update()
         pygame.display.flip()
 
-    def lose_game():
-        pass
-
-    def win_gane()
-        pass
 
 
 def about_function():
     # открытие файла txt с описанием правил игры
-    pass
+    animation_set = [pygame.image.load(f"animation/{i}.jpg") for i in range(1, 7)]
+
+    window = pygame.display.set_mode((550, 550))
+
+    clock = pygame.time.Clock()
+    i = 0
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+
+        window.fill((0, 0, 0))
+        window.blit(animation_set[i // 12], (100, 20))
+        i += 1
+        if i == 60:
+            i = 0
+
+        pygame.display.flip()
+        clock.tick(30)
 
 
 main_theme = pygame_menu.themes.THEME_SOLARIZED.copy()
