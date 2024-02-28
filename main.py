@@ -2,8 +2,10 @@ import os
 import sys
 
 import pygame
+from pygame import mixer
 import pygame_menu
 
+mixer.init()
 pygame.init()
 clock = pygame.time.Clock()
 fps = 30
@@ -12,7 +14,16 @@ fon = pygame.image.load('data/fon.jpg')
 number_1 = 0
 num_level = 1
 number_2 = 0
+endgame = 0
 
+#music
+start_music = pygame.mixer.Sound('data/song-for-game.mp3')
+start_music.set_volume(0.5)
+start_music.play()
+jump_sound = pygame.mixer.Sound('data/sound.wav')
+jump_sound.set_volume(0.5)
+jump_sound2 = pygame.mixer.Sound('data/sound2.wav')
+jump_sound2.set_volume(0.5)
 
 def load_level(filename):
     filename = "data/" + filename
@@ -84,6 +95,7 @@ class Player_1:
             self.flag_n = True
             dx += 5
         if key[pygame.K_UP] and self.f == 1 and self.flight == False:
+            jump_sound.play()
             self.speed_y = -15
             self.f = 0
         if not key[pygame.K_UP]:
@@ -134,10 +146,10 @@ class Player_1:
 
 class Player_2:
     def __init__(self, x, y):
-        player_image = load_image('player_2.png')
-        self.img = pygame.transform.scale(player_image, (60, 80))
-        player_image_n = load_image('player_2_n.png')
-        self.img_n = pygame.transform.scale(player_image_n, (60, 80))
+        player_image = load_image('player2.png')
+        self.img = pygame.transform.scale(player_image, (45, 80))
+        player_image_n = load_image('playern.png')
+        self.img_n = pygame.transform.scale(player_image_n, (45, 80))
         self.img_rect = self.img.get_rect()
         self.img_rect.x = x
         self.img_rect.y = y
@@ -161,6 +173,7 @@ class Player_2:
             self.flag_n = True
             dx += 5
         if key[pygame.K_w] and self.f == 1 and self.flight == False:
+            jump_sound2.play()
             self.speed_y = -15
             self.f = 0
         if not key[pygame.K_w]:
@@ -180,13 +193,8 @@ class Player_2:
             if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
                 if tile[0] == img_c:
                     fl = 1
+                    print('Hi')
                     number_2 = 1
-                else:
-                    dx = 0
-            if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
-                if tile[0] == img_w:
-                    pass
-                    # lose_game()
                 else:
                     dx = 0
             # in y coordinates
@@ -270,6 +278,7 @@ level = Level(num_level)
 
 
 def start_the_game():
+    start_music.stop()
     pygame.init()
     size = width, height = 800, 800
     screen = pygame.display.set_mode(size)
