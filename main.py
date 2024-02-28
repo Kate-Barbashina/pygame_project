@@ -68,6 +68,7 @@ class Player_1:
         self.height = self.img.get_height()
         self.speed_y = 0
         self.f = 1  # hero didn't jump
+        self.flight = True
         self.flag_n = True
 
     def update(self):
@@ -82,8 +83,8 @@ class Player_1:
         if key[pygame.K_RIGHT]:
             self.flag_n = True
             dx += 5
-        if key[pygame.K_UP] and self.f == 1:
-            self.speed_y = -12
+        if key[pygame.K_UP] and self.f == 1 and self.flight == False:
+            self.speed_y = -15
             self.f = 0
         if not key[pygame.K_UP]:
             self.f = 1
@@ -96,6 +97,7 @@ class Player_1:
 
         fl = 0
         # checking
+        self.flight = True
         for tile in level.cloud:
             # in x coordinates
             if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
@@ -120,6 +122,7 @@ class Player_1:
                 else:
                     dy = tile[1].top - self.img_rect.bottom
                     self.speed_y = 0
+                    self.flight = False # because he falls, so he is on the ground, we can jump after
 
         self.img_rect.x += dx
         self.img_rect.y += dy
@@ -143,6 +146,7 @@ class Player_2:
         self.speed_y = 0
         self.f = 1  # hero didn't jump
         self.flag_n = True
+        self.flight = True
 
     def update(self):
         global number_2
@@ -156,8 +160,8 @@ class Player_2:
         if key[pygame.K_d]:
             self.flag_n = True
             dx += 5
-        if key[pygame.K_w] and self.f == 1:
-            self.speed_y = -12
+        if key[pygame.K_w] and self.f == 1 and self.flight == False:
+            self.speed_y = -15
             self.f = 0
         if not key[pygame.K_w]:
             self.f = 1
@@ -170,6 +174,7 @@ class Player_2:
 
         fl = 0
         # checking
+        self.flight = True
         for tile in level.cloud:
             # in x coordinates
             if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
@@ -194,6 +199,7 @@ class Player_2:
                 else:
                     dy = tile[1].top - self.img_rect.bottom
                     self.speed_y = 0
+                    self.flight = False
 
         self.img_rect.x += dx
         self.img_rect.y += dy
