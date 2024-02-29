@@ -65,7 +65,27 @@ coin_sprites = pygame.sprite.Group()
 def lose_game(n):
     global endgame
     endgame = -1
+    pygame.init()
+    size = width, height = 800, 800
+    screen = pygame.display.set_mode(size)
+    running = True
+    if n == 1:
+        lose = load_image('tilt_1.jpg')
+    else:
+        lose = load_image('tilt_2.jpg')
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            #if event.type == pygame.MOUSEBUTTONDOWN:
+               # if area.collidepoint(event.pos):
+        lose_tr = pygame.transform.scale(lose, (800, 800))
+        clock.tick(fps)
+        screen.blit(lose_tr, (0, 0))
+        pygame.display.flip()
 
+    print(1)
 
 
 def win_game():
@@ -231,8 +251,6 @@ class Level:
     def __init__(self, n):
         self.cloud = []
         self.water_list = []
-        print(num_level)
-        print(n)
         backgr_image = load_image(f'backgr{n}.jpg')
         self.background_image = pygame.transform.scale(backgr_image, (800, 800))
         block_image = load_image(f'dirt{n}.png')
@@ -379,9 +397,9 @@ def start_the_game():
 def about_function():
     # открытие файла txt с описанием правил игры
     animation_set = [pygame.image.load(f"animation/{i}.jpg") for i in range(1, 6)]
-    window = pygame.display.set_mode((550, 550))
-
+    window = pygame.display.set_mode((750, 750))
     clock = pygame.time.Clock()
+    flag = True
     i = 0
     while True:
         for event in pygame.event.get():
@@ -391,15 +409,17 @@ def about_function():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 start_the_game()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                rule = load_image('rules.jpg')
-                rules = pygame.transform.scale(rule, (800, 800))
-                window.blit(rules, (100, 0))
-
-        window.fill((0, 0, 0))
-        window.blit(animation_set[i // 12], (100, 20))
-        i += 1
-        if i == 60:
-            print('1')
+                flag = False
+        if flag:
+            window.fill((0, 0, 0))
+            window.blit(animation_set[i // 12], (100, 20))
+            i += 1
+            if i == 60:
+                i = 0
+        else:
+            rule = load_image('rules.jpg')
+            rules = pygame.transform.scale(rule, (650, 650))
+            window.blit(rules, (100, 0))
 
         pygame.display.flip()
         clock.tick(30)

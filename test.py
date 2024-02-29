@@ -1,7 +1,7 @@
 import pygame
 import sys
 
-animation_set = [pygame.image.load(f"animation/{i}.jpg") for i in range(1, 7)]
+animation_set = [pygame.image.load(f"animation/{i}.jpg") for i in range(1, 6)]
 
 window = pygame.display.set_mode((550, 550))
 
@@ -21,3 +21,18 @@ while True:
 
     pygame.display.flip()
     clock.tick(30)
+
+
+
+    i = 0
+    while True:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                start_the_game()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                rule = load_image('rules.jpg')
+                rules = pygame.transform.scale(rule, (800, 800))
+                screen.blit(rules, (100, 0))
