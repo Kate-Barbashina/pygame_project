@@ -21,9 +21,9 @@ start_music = pygame.mixer.Sound('data/song-for-game.mp3')
 start_music.set_volume(0.5)
 start_music.play()
 jump_sound = pygame.mixer.Sound('data/sound.wav')
-jump_sound.set_volume(0.5)
+jump_sound.set_volume(0.4)
 jump_sound2 = pygame.mixer.Sound('data/sound2.wav')
-jump_sound2.set_volume(0.5)
+jump_sound2.set_volume(0.3)
 
 def load_level(filename):
     filename = "data/" + filename
@@ -56,6 +56,7 @@ crystal_image = load_image('kristal.png')
 water_image = load_image('water.png')
 img_c = pygame.transform.scale(crystal_image, (45, 80))
 img_w = pygame.transform.scale(water_image, (4, 80))
+coin_sprites = pygame.sprite.Group()
 
 
 # some methods
@@ -63,7 +64,7 @@ def lose_game():
     print('tilt')
 
 
-def win_gane():
+def win_game():
     print('12334')
 
 
@@ -81,6 +82,7 @@ class Player_1:
         self.f = 1  # hero didn't jump
         self.flight = True
         self.flag_n = True
+        self.score = 0
 
     def update(self):
         global number_1
@@ -109,6 +111,12 @@ class Player_1:
 
         fl = 0
         # checking
+        # collision with water
+        for tile in level.water_list:
+            if tile[1].collidepoint(self.img_rect.bottomright) or tile[1].collidepoint(self.img_rect.bottomleft):
+                lose_game()
+        # collision with coins
+        # collision for jumping
         self.flight = True
         for tile in level.cloud:
             # in x coordinates
@@ -116,12 +124,6 @@ class Player_1:
                 if tile[0] == img_c:
                     fl = 1
                     number_1 = 1
-                else:
-                    dx = 0
-            if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
-                if tile[0] == img_w:
-                    pass
-                    # lose_game()
                 else:
                     dx = 0
             # in y coordinates
@@ -142,7 +144,6 @@ class Player_1:
             screen.blit(self.img, self.img_rect)
         else:
             screen.blit(self.img_n, self.img_rect)
-
 
 class Player_2:
     def __init__(self, x, y):
@@ -187,13 +188,17 @@ class Player_2:
 
         fl = 0
         # checking
+        # collision with water
+        for tile in level.water_list:
+            if tile[1].collidepoint(self.img_rect.bottomright) or tile[1].collidepoint(self.img_rect.bottomleft):
+                lose_game()
+        # collision for jumping
         self.flight = True
         for tile in level.cloud:
             # in x coordinates
             if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
                 if tile[0] == img_c:
                     fl = 1
-                    print('Hi')
                     number_2 = 1
                 else:
                     dx = 0
@@ -220,6 +225,7 @@ class Player_2:
 class Level:
     def __init__(self, n):
         self.cloud = []
+        self.water_list = []
         backgr_image = load_image(f'backgr{n}.jpg')
         background_image = pygame.transform.scale(backgr_image, (800, 800))
         block_image = load_image(f'dirt{n}.png')
@@ -253,11 +259,14 @@ class Level:
                     imgc_rect.y = r * 50
                     tile = (img_c, imgc_rect)
                     self.cloud.append(tile)
+                if leve[y][x] == '4':
+                    coin = Coin([c * 50 + 25, r * 50 + 25])
                 if leve[y][x] == '*':
                     imgw_rect = img.get_rect()
                     imgw_rect.x = c * 50
                     imgw_rect.y = r * 50
                     tile = (img_w, imgw_rect)
+                    self.water_list.append(tile)
                     self.cloud.append(tile)
                 # if leve[y][x] == '#':
                 # imgw1_rect = img.get_rect()
@@ -274,8 +283,18 @@ class Level:
             # pygame.draw.rect(screen, (255, 255, 255), tile[1], 2)
 
 
-level = Level(num_level)
+class Coin(pygame.sprite.Sprite):
+    def __init__(self, coordinates):
+        super().__init__(coin_sprites)
+        x = coordinates[0]
+        y = coordinates[1]
+        coin_img = load_image('coin.png')
+        self.image = pygame.transform.scale(coin_img, (20, 20))
+        self.rect = self.image.get_rect()
+        self.rect.center = (x, y)
 
+
+level = Level(num_level)
 
 def start_the_game():
     start_music.stop()
@@ -315,6 +334,7 @@ def start_the_game():
         clock.tick(fps)
         screen.blit(background_image, (0, 0))
         level.draw()
+        coin_sprites.draw(screen)
         player_1.update()
         player_2.update()
         pygame.display.flip()
