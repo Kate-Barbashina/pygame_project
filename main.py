@@ -2,8 +2,8 @@ import os
 import sys
 
 import pygame
-import pygame_menu
 from pygame import mixer
+import pygame_menu
 
 mixer.init()
 pygame.init()
@@ -16,7 +16,7 @@ num_level = 1
 number_2 = 0
 endgame = 0  # it means that game in process; 1 - you passed level or won game; -1 - game over
 
-# music
+#music
 start_music = pygame.mixer.Sound('data/song-for-game.mp3')
 start_music.set_volume(0.5)
 start_music.play()
@@ -24,7 +24,6 @@ jump_sound = pygame.mixer.Sound('data/sound.wav')
 jump_sound.set_volume(0.4)
 jump_sound2 = pygame.mixer.Sound('data/sound2.wav')
 jump_sound2.set_volume(0.3)
-
 
 def load_level(filename):
     filename = "data/" + filename
@@ -61,10 +60,30 @@ coin_sprites = pygame.sprite.Group()
 
 
 # some methods
-def lose_game():
-    print('tilt')
+def lose_game(n):
     global endgame
     endgame = -1
+    pygame.init()
+    size = width, height = 800, 800
+    screen = pygame.display.set_mode(size)
+    running = True
+    if n == 1:
+        lose = load_image('tilt_1.jpg')
+    else:
+        lose = load_image('tilt_2.jpg')
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            # if event.type == pygame.MOUSEBUTTONDOWN:
+            # if area.collidepoint(event.pos):
+        lose_tr = pygame.transform.scale(lose, (800, 800))
+        clock.tick(fps)
+        screen.blit(lose_tr, (0, 0))
+        pygame.display.flip()
+
+    print(1)
 
 
 def win_game():
@@ -117,8 +136,8 @@ class Player_1:
         # checking
         # collision with water
         for tile in level.water_list:
-            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.rect.bottomleft):
-                lose_game()
+            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.img_rect.bottomleft):
+                lose_game(1)
         # collision for jumping
         self.flight = True
         for tile in level.cloud:
@@ -194,8 +213,8 @@ class Player_2:
         # checking
         # collision with water
         for tile in level.water_list:
-            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.rect.bottomleft):
-                lose_game()
+            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.img_rect.bottomleft):
+                lose_game(2)
         # collision for jumping
         self.flight = True
         for tile in level.cloud:
@@ -298,7 +317,6 @@ class Coin(pygame.sprite.Sprite):
 
 level = Level(num_level)
 
-
 def start_the_game():
     global endgame
     score_1 = 0
@@ -360,8 +378,7 @@ def start_the_game():
 
 def about_function():
     # открытие файла txt с описанием правил игры
-    animation_set = [pygame.image.load(f"animation/{i}.jpg") for i in range(1, 7)]
-
+    animation_set = [pygame.image.load(f"animation/{i}.jpg") for i in range(1, 6)]
     window = pygame.display.set_mode((550, 550))
 
     clock = pygame.time.Clock()
@@ -371,12 +388,18 @@ def about_function():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                start_the_game()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                rule = load_image('rules.jpg')
+                rules = pygame.transform.scale(rule, (800, 800))
+                window.blit(rules, (100, 0))
 
         window.fill((0, 0, 0))
         window.blit(animation_set[i // 12], (100, 20))
         i += 1
         if i == 60:
-            i = 0
+            print('1')
 
         pygame.display.flip()
         clock.tick(30)
