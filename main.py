@@ -11,6 +11,8 @@ clock = pygame.time.Clock()
 fps = 30
 screen = pygame.display.set_mode((500, 600))
 fon = pygame.image.load('data/fon.jpg')
+# variables
+sprite_size = 50
 number_1 = 0
 num_level = 1
 number_2 = 0
@@ -63,27 +65,7 @@ coin_sprites = pygame.sprite.Group()
 def lose_game(n):
     global endgame
     endgame = -1
-    pygame.init()
-    size = width, height = 800, 800
-    screen = pygame.display.set_mode(size)
-    running = True
-    if n == 1:
-        lose = load_image('tilt_1.jpg')
-    else:
-        lose = load_image('tilt_2.jpg')
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                pygame.quit()
-                sys.exit()
-            # if event.type == pygame.MOUSEBUTTONDOWN:
-            # if area.collidepoint(event.pos):
-        lose_tr = pygame.transform.scale(lose, (800, 800))
-        clock.tick(fps)
-        screen.blit(lose_tr, (0, 0))
-        pygame.display.flip()
 
-    print(1)
 
 
 def win_game():
@@ -136,7 +118,7 @@ class Player_1:
         # checking
         # collision with water
         for tile in level.water_list:
-            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.img_rect.bottomleft):
+            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.rect.bottomleft):
                 lose_game(1)
         # collision for jumping
         self.flight = True
@@ -213,7 +195,7 @@ class Player_2:
         # checking
         # collision with water
         for tile in level.water_list:
-            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.img_rect.bottomleft):
+            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.rect.bottomleft):
                 lose_game(2)
         # collision for jumping
         self.flight = True
@@ -249,14 +231,16 @@ class Level:
     def __init__(self, n):
         self.cloud = []
         self.water_list = []
+        print(num_level)
+        print(n)
         backgr_image = load_image(f'backgr{n}.jpg')
-        background_image = pygame.transform.scale(backgr_image, (800, 800))
+        self.background_image = pygame.transform.scale(backgr_image, (800, 800))
         block_image = load_image(f'dirt{n}.png')
-        img1 = pygame.transform.scale(block_image, (50, 50))
+        img1 = pygame.transform.scale(block_image, (sprite_size, sprite_size))
         dirt_image = load_image(f'block{n}.png')
-        img = pygame.transform.scale(dirt_image, (50, 50))
+        img = pygame.transform.scale(dirt_image, (sprite_size, sprite_size))
         water_image = load_image('water.png')
-        img_w = pygame.transform.scale(water_image, (50, 50))
+        img_w = pygame.transform.scale(water_image, (sprite_size, sprite_size))
         leve = load_level(f'level{n}.txt')
         r = 0
         for y in range(len(leve)):
@@ -264,28 +248,28 @@ class Level:
             for x in range(len(leve[y])):
                 if leve[y][x] == '1':
                     img_rect = img.get_rect()
-                    img_rect.x = c * 50
-                    img_rect.y = r * 50
+                    img_rect.x = c * sprite_size
+                    img_rect.y = r * sprite_size
                     tile = (img, img_rect)
                     self.cloud.append(tile)
                 if leve[y][x] == '2':
                     img1_rect = img.get_rect()
-                    img1_rect.x = c * 50
-                    img1_rect.y = r * 50
+                    img1_rect.x = c * sprite_size
+                    img1_rect.y = r * sprite_size
                     tile = (img1, img1_rect)
                     self.cloud.append(tile)
                 if leve[y][x] == '3':
                     imgc_rect = img.get_rect()
-                    imgc_rect.x = c * 50
-                    imgc_rect.y = r * 50
+                    imgc_rect.x = c * sprite_size
+                    imgc_rect.y = r * sprite_size
                     tile = (img_c, imgc_rect)
                     self.cloud.append(tile)
                 if leve[y][x] == '4':
-                    coin = Coin([c * 50 + 25, r * 50 + 25])
+                    coin = Coin([c * sprite_size + sprite_size // 2, r * sprite_size + sprite_size // 2])
                 if leve[y][x] == '*':
                     imgw_rect = img.get_rect()
-                    imgw_rect.x = c * 50
-                    imgw_rect.y = r * 50
+                    imgw_rect.x = c * sprite_size
+                    imgw_rect.y = r * sprite_size
                     tile = (img_w, imgw_rect)
                     self.water_list.append(tile)
                     self.cloud.append(tile)
@@ -317,6 +301,25 @@ class Coin(pygame.sprite.Sprite):
 
 level = Level(num_level)
 
+def coin_screen(s1, s2):
+    intro_text = ["Счет", "",
+                  f"Игрок 1 набрал {s1} монет",
+                  f"Игрок 2 набрал {s2} монет", "",
+                  "для перехода на следущий уровень нажмите SPACE"]
+
+    fon = pygame.transform.scale(load_image('coin_fon.jpg'), (800, 800))
+    screen.blit(fon, (0, 0))
+    font = pygame.font.Font(None, 30)
+    text_coord = 50
+    for line in intro_text:
+        string_rendered = font.render(line, 1, pygame.Color('black'))
+        intro_rect = string_rendered.get_rect()
+        text_coord += 10
+        intro_rect.top = text_coord
+        intro_rect.x = 10
+        text_coord += intro_rect.height
+        screen.blit(string_rendered, intro_rect)
+
 def start_the_game():
     global endgame
     score_1 = 0
@@ -329,8 +332,7 @@ def start_the_game():
     global num_level
     global number_1
     global number_2
-    backgr_image = load_image(f'backgr{num_level}.jpg')
-    background_image = pygame.transform.scale(backgr_image, (800, 800))
+    background_image = level.background_image
 
     player_1 = Player_1(100, 800 - 130)
     player_2 = Player_2(130, 800 - 130)
@@ -341,10 +343,10 @@ def start_the_game():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-                running = False
 
         if number_1 == 1 and number_2 == 1:
             # start new level
+            coin_screen(score_1, score_2)
             endgame = 0
             score_1 = 0
             score_2 = 0
@@ -352,14 +354,12 @@ def start_the_game():
             if num_level == 1:
                 player_1 = Player_1(100, 800 - 130)
                 player_2 = Player_2(130, 800 - 130)
-                level = Level(num_level)
             else:
                 player_1 = Player_1(100, 800 - 130)
                 player_2 = Player_2(660, 800 - 130)
-                level = Level(num_level)
+            level = Level(num_level)
             number_1 = 0
             number_2 = 0
-
         clock.tick(fps)
         screen.blit(background_image, (0, 0))
         level.draw()
