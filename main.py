@@ -2,8 +2,8 @@ import os
 import sys
 
 import pygame
-from pygame import mixer
 import pygame_menu
+from pygame import mixer
 
 mixer.init()
 pygame.init()
@@ -14,9 +14,9 @@ fon = pygame.image.load('data/fon.jpg')
 number_1 = 0
 num_level = 1
 number_2 = 0
-endgame = 0
+endgame = 0  # it means that game in process; 1 - you passed level or won game; -1 - game over
 
-#music
+# music
 start_music = pygame.mixer.Sound('data/song-for-game.mp3')
 start_music.set_volume(0.5)
 start_music.play()
@@ -24,6 +24,7 @@ jump_sound = pygame.mixer.Sound('data/sound.wav')
 jump_sound.set_volume(0.4)
 jump_sound2 = pygame.mixer.Sound('data/sound2.wav')
 jump_sound2.set_volume(0.3)
+
 
 def load_level(filename):
     filename = "data/" + filename
@@ -62,10 +63,14 @@ coin_sprites = pygame.sprite.Group()
 # some methods
 def lose_game():
     print('tilt')
+    global endgame
+    endgame = -1
 
 
 def win_game():
     print('12334')
+    global endgame
+    endgame = 1
 
 
 class Player_1:
@@ -73,16 +78,15 @@ class Player_1:
         self.img = pygame.transform.scale(player_1_image, (45, 80))
         player_image_n = load_image('pln.png')
         self.img_n = pygame.transform.scale(player_image_n, (45, 80))
-        self.img_rect = self.img.get_rect()
-        self.img_rect.x = x
-        self.img_rect.y = y
+        self.rect = self.img.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.width = self.img.get_width()
         self.height = self.img.get_height()
         self.speed_y = 0
         self.f = 1  # hero didn't jump
         self.flight = True
         self.flag_n = True
-        self.score = 0
 
     def update(self):
         global number_1
@@ -113,37 +117,37 @@ class Player_1:
         # checking
         # collision with water
         for tile in level.water_list:
-            if tile[1].collidepoint(self.img_rect.bottomright) or tile[1].collidepoint(self.img_rect.bottomleft):
+            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.rect.bottomleft):
                 lose_game()
-        # collision with coins
         # collision for jumping
         self.flight = True
         for tile in level.cloud:
             # in x coordinates
-            if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
+            if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
                 if tile[0] == img_c:
                     fl = 1
                     number_1 = 1
                 else:
                     dx = 0
             # in y coordinates
-            if tile[1].colliderect(self.img_rect.x, self.img_rect.y + dy, self.width, self.height):
+            if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
                 # jumping
                 if self.speed_y < 0:
-                    dy = tile[1].bottom - self.img_rect.top
+                    dy = tile[1].bottom - self.rect.top
                     self.speed_y = 0  # speed = 0 because we get in a normal state after jump
                 # falling
                 else:
-                    dy = tile[1].top - self.img_rect.bottom
+                    dy = tile[1].top - self.rect.bottom
                     self.speed_y = 0
-                    self.flight = False # because he falls, so he is on the ground, we can jump after
+                    self.flight = False  # because he falls, so he is on the ground, we can jump after
 
-        self.img_rect.x += dx
-        self.img_rect.y += dy
+        self.rect.x += dx
+        self.rect.y += dy
         if self.flag_n:
-            screen.blit(self.img, self.img_rect)
+            screen.blit(self.img, self.rect)
         else:
-            screen.blit(self.img_n, self.img_rect)
+            screen.blit(self.img_n, self.rect)
+
 
 class Player_2:
     def __init__(self, x, y):
@@ -151,9 +155,9 @@ class Player_2:
         self.img = pygame.transform.scale(player_image, (45, 80))
         player_image_n = load_image('playern.png')
         self.img_n = pygame.transform.scale(player_image_n, (45, 80))
-        self.img_rect = self.img.get_rect()
-        self.img_rect.x = x
-        self.img_rect.y = y
+        self.rect = self.img.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.width = self.img.get_width()
         self.height = self.img.get_height()
         self.speed_y = 0
@@ -190,36 +194,36 @@ class Player_2:
         # checking
         # collision with water
         for tile in level.water_list:
-            if tile[1].collidepoint(self.img_rect.bottomright) or tile[1].collidepoint(self.img_rect.bottomleft):
+            if tile[1].collidepoint(self.rect.bottomright) or tile[1].collidepoint(self.rect.bottomleft):
                 lose_game()
         # collision for jumping
         self.flight = True
         for tile in level.cloud:
             # in x coordinates
-            if tile[1].colliderect(self.img_rect.x + dx, self.img_rect.y, self.width, self.height):
+            if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
                 if tile[0] == img_c:
                     fl = 1
                     number_2 = 1
                 else:
                     dx = 0
             # in y coordinates
-            if tile[1].colliderect(self.img_rect.x, self.img_rect.y + dy, self.width, self.height):
+            if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
                 # jumping
                 if self.speed_y < 0:
-                    dy = tile[1].bottom - self.img_rect.top
+                    dy = tile[1].bottom - self.rect.top
                     self.speed_y = 0  # speed = 0 because we get in a normal state after jump
                 # falling
                 else:
-                    dy = tile[1].top - self.img_rect.bottom
+                    dy = tile[1].top - self.rect.bottom
                     self.speed_y = 0
                     self.flight = False
 
-        self.img_rect.x += dx
-        self.img_rect.y += dy
+        self.rect.x += dx
+        self.rect.y += dy
         if self.flag_n:
-            screen.blit(self.img, self.img_rect)
+            screen.blit(self.img, self.rect)
         else:
-            screen.blit(self.img_n, self.img_rect)
+            screen.blit(self.img_n, self.rect)
 
 
 class Level:
@@ -234,8 +238,6 @@ class Level:
         img = pygame.transform.scale(dirt_image, (50, 50))
         water_image = load_image('water.png')
         img_w = pygame.transform.scale(water_image, (50, 50))
-        # water_dop_image = load_image('water_dop.png')
-        # img_w1 = pygame.transform.scale(water_dop_image, (50, 50))
         leve = load_level(f'level{n}.txt')
         r = 0
         for y in range(len(leve)):
@@ -296,7 +298,11 @@ class Coin(pygame.sprite.Sprite):
 
 level = Level(num_level)
 
+
 def start_the_game():
+    global endgame
+    score_1 = 0
+    score_2 = 0
     start_music.stop()
     pygame.init()
     size = width, height = 800, 800
@@ -318,15 +324,20 @@ def start_the_game():
                 pygame.quit()
                 sys.exit()
                 running = False
+
         if number_1 == 1 and number_2 == 1:
+            # start new level
+            endgame = 0
+            score_1 = 0
+            score_2 = 0
             num_level += 1
-            if num_level == 2:
+            if num_level == 1:
                 player_1 = Player_1(100, 800 - 130)
-                player_2 = Player_2(660, 800 - 130)
+                player_2 = Player_2(130, 800 - 130)
                 level = Level(num_level)
             else:
                 player_1 = Player_1(100, 800 - 130)
-                player_2 = Player_2(130, 800 - 130)
+                player_2 = Player_2(660, 800 - 130)
                 level = Level(num_level)
             number_1 = 0
             number_2 = 0
@@ -334,6 +345,13 @@ def start_the_game():
         clock.tick(fps)
         screen.blit(background_image, (0, 0))
         level.draw()
+        if pygame.sprite.spritecollide(player_1, coin_sprites, True):
+            score_1 += 1
+        if pygame.sprite.spritecollide(player_2, coin_sprites, True):
+            score_2 += 1
+        if endgame != 0:
+            score_1 = 0
+            score_2 = 0
         coin_sprites.draw(screen)
         player_1.update()
         player_2.update()
