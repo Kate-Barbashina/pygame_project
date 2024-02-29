@@ -81,7 +81,6 @@ def lose_game(n):
         screen.blit(lose_tr, (0, 0))
         pygame.display.flip()
 
-    print(1)
 
 
 def win_game():
@@ -361,10 +360,10 @@ def start_the_game():
 
 
 def about_function():
-    # открытие файла txt с описанием правил игры
     animation_set = [pygame.image.load(f"animation/{i}.jpg") for i in range(1, 6)]
-    window = pygame.display.set_mode((550, 550))
+    window = pygame.display.set_mode((750, 750))
     clock = pygame.time.Clock()
+    flag = True
     i = 0
     while True:
         for event in pygame.event.get():
@@ -374,15 +373,17 @@ def about_function():
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 start_the_game()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                rule = load_image('rules.jpg')
-                rules = pygame.transform.scale(rule, (800, 800))
-                window.blit(rules, (100, 0))
-
-        window.fill((0, 0, 0))
-        window.blit(animation_set[i // 12], (100, 20))
-        i += 1
-        if i == 60:
-            print('1')
+                flag = False
+        if flag:
+            window.fill((0, 0, 0))
+            window.blit(animation_set[i // 12], (100, 20))
+            i += 1
+            if i == 60:
+                i = 0
+        else:
+            rule = load_image('rules.jpg')
+            rules = pygame.transform.scale(rule, (650, 650))
+            window.blit(rules, (100, 0))
 
         pygame.display.flip()
         clock.tick(30)
