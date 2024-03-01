@@ -2,23 +2,24 @@ import os
 import sys
 
 import pygame
-from pygame import mixer
 import pygame_menu
+from pygame import mixer
 
 mixer.init()
 pygame.init()
 clock = pygame.time.Clock()
-fps = 30
+
 screen = pygame.display.set_mode((500, 600))
 fon = pygame.image.load('data/fon.jpg')
 # variables
+fps = 30
 sprite_size = 50
 number_1 = 0
 num_level = 1
 number_2 = 0
 endgame = 0  # it means that game in process; 1 - you passed level or won game; -1 - game over
 
-#music
+# music
 start_music = pygame.mixer.Sound('data/song-for-game.mp3')
 start_music.set_volume(0.5)
 start_music.play()
@@ -26,6 +27,7 @@ jump_sound = pygame.mixer.Sound('data/sound.wav')
 jump_sound.set_volume(0.4)
 jump_sound2 = pygame.mixer.Sound('data/sound2.wav')
 jump_sound2.set_volume(0.3)
+
 
 def load_level(filename):
     filename = "data/" + filename
@@ -58,6 +60,7 @@ crystal_image = load_image('kristal.png')
 water_image = load_image('water.png')
 img_c = pygame.transform.scale(crystal_image, (45, 80))
 img_w = pygame.transform.scale(water_image, (4, 80))
+
 coin_sprites = pygame.sprite.Group()
 
 
@@ -78,13 +81,12 @@ def lose_game(n):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            #if event.type == pygame.MOUSEBUTTONDOWN:
-               # if area.collidepoint(event.pos):
+            # if event.type == pygame.MOUSEBUTTONDOWN:
+            # if area.collidepoint(event.pos):
         lose_tr = pygame.transform.scale(lose, (800, 800))
         clock.tick(fps)
         screen.blit(lose_tr, (0, 0))
         pygame.display.flip()
-
     print(1)
 
 
@@ -319,37 +321,30 @@ class Coin(pygame.sprite.Sprite):
 
 level = Level(num_level)
 
-def coin_screen(s1, s2):
-    intro_text = ["Счет", "",
-                  f"Игрок 1 набрал {s1} монет",
-                  f"Игрок 2 набрал {s2} монет", "",
-                  "для перехода на следущий уровень нажмите SPACE"]
 
-    fon = pygame.transform.scale(load_image('coin_fon.jpg'), (800, 800))
-    screen.blit(fon, (0, 0))
-    font = pygame.font.Font(None, 30)
-    text_coord = 50
-    for line in intro_text:
-        string_rendered = font.render(line, 1, pygame.Color('black'))
-        intro_rect = string_rendered.get_rect()
-        text_coord += 10
-        intro_rect.top = text_coord
-        intro_rect.x = 10
-        text_coord += intro_rect.height
-        screen.blit(string_rendered, intro_rect)
+def coin_screen(s1, s2, corr1, corr2):
+    f1 = pygame.font.Font(None, 30)
+    text1 = f1.render(f'Игрок 1: {s1} монет', True,
+                      'white')
+    f1 = pygame.font.Font(None, 30)
+    text2 = f1.render(f'Игрок 2: {s2} монет', True,
+                      'white')
+    screen.blit(text1, (corr1[0], corr1[1]))
+    screen.blit(text2, (corr2[0], corr2[1]))
+
 
 def start_the_game():
     global endgame
+    global level
+    global num_level
+    global number_1
+    global number_2
     score_1 = 0
     score_2 = 0
     start_music.stop()
     pygame.init()
     size = width, height = 800, 800
     screen = pygame.display.set_mode(size)
-    global level
-    global num_level
-    global number_1
-    global number_2
     background_image = level.background_image
 
     player_1 = Player_1(100, 800 - 130)
@@ -364,7 +359,6 @@ def start_the_game():
 
         if number_1 == 1 and number_2 == 1:
             # start new level
-            coin_screen(score_1, score_2)
             endgame = 0
             score_1 = 0
             score_2 = 0
@@ -385,6 +379,7 @@ def start_the_game():
             score_1 += 1
         if pygame.sprite.spritecollide(player_2, coin_sprites, True):
             score_2 += 1
+        coin_screen(score_1, score_2, [50, 50], [585, 50])
         if endgame != 0:
             score_1 = 0
             score_2 = 0
@@ -412,14 +407,14 @@ def about_function():
                 flag = False
         if flag:
             window.fill((0, 0, 0))
-            window.blit(animation_set[i // 12], (100, 20))
+            window.blit(pygame.transform.scale(animation_set[i // 12], (800,800)), (0, 0))
             i += 1
             if i == 60:
                 i = 0
         else:
             rule = load_image('rules.jpg')
-            rules = pygame.transform.scale(rule, (650, 650))
-            window.blit(rules, (100, 0))
+            rules = pygame.transform.scale(rule, (750, 750))
+            window.blit(rules, (0, 0))
 
         pygame.display.flip()
         clock.tick(30)
