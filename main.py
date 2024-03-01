@@ -18,6 +18,9 @@ number_1 = 0
 num_level = 1
 number_2 = 0
 endgame = 0  # it means that game in process; 1 - you passed level or won game; -1 - game over
+died_1 = 0
+died_2 = 0
+
 
 # music
 start_music = pygame.mixer.Sound('data/song-for-game.mp3')
@@ -67,6 +70,8 @@ coin_sprites = pygame.sprite.Group()
 # some methods
 def lose_game(n):
     global endgame
+    global died_1
+    global died_2
     endgame = -1
     pygame.init()
     size = width, height = 800, 800
@@ -74,15 +79,19 @@ def lose_game(n):
     running = True
     if n == 1:
         lose = load_image('tilt_1.jpg')
+        died_1 += 1
     else:
         lose = load_image('tilt_2.jpg')
+        died_2 += 1
+    rect = pygame.Rect((700, 0, 100, 100))
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-            # if event.type == pygame.MOUSEBUTTONDOWN:
-            # if area.collidepoint(event.pos):
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if rect.collidepoint(event.pos):
+                    start_the_game()
         lose_tr = pygame.transform.scale(lose, (800, 800))
         clock.tick(fps)
         screen.blit(lose_tr, (0, 0))
