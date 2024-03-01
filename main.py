@@ -1,4 +1,5 @@
 import os
+import sqlite3
 import sys
 
 import pygame
@@ -20,6 +21,8 @@ number_2 = 0
 endgame = 0  # it means that game in process; 1 - you passed level or won game; -1 - game over
 died_1 = 0
 died_2 = 0
+score_1 = 0
+score_2 = 0
 
 
 # music
@@ -102,7 +105,7 @@ def lose_game(n):
 
 def win_game(s1, s2):
     global endgame
-    endgame = -1
+    endgame = 1
     pygame.init()
     size = width, height = 800, 800
     screen = pygame.display.set_mode(size)
@@ -116,6 +119,7 @@ def win_game(s1, s2):
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 flag = True
+                print('Анимация в процессе рисования')
         if not flag:
             if s1 + s2 == 10:
                 intro_text = ['', '', '', '', '', 'Поздравляю, вы собрали все монеты!',
@@ -382,6 +386,34 @@ class Coin(pygame.sprite.Sprite):
 level = Level(num_level)
 
 
+def base_record():
+    #self.connection = sqlite3.connect("databaze.sqlite")
+    #query = 'SELECT * FROM data'
+    #self.res = self.connection.cursor().execute(query).fetchall()
+    user1 = username.get_value()
+    user2 = username2.get_value()
+    with sqlite3.connect('databazze.sqlite') as datab:
+        cursor = datab.cursor()
+        query = '''CREATE TABLE IF NOT EXISTS data(Name, Score, Death_number)'''
+        cursor.execute(query)
+        query1 = (
+            f'INSERT into data (Name, Score, Death_number) VALUES (\'{user1}\''
+            f', \'{score_1}\', \'{died_1}\')')
+        query2 = (
+            f'INSERT into data (Name, Score, Death_number) VALUES (\'{user2}\''
+            f', \'{score_2}\', \'{died_2}\')')
+        cursor.execute(query1)
+        cursor.execute(query2)
+        datab.commit()
+
+def base_clear():
+    connection_2 = sqlite3.connect("databazze.sqlite")
+    cur = connection_2.cursor()
+    cur.execute("""DELETE FROM data""")
+    connection_2.commit()
+    connection_2.close()
+
+
 def coin_screen(s1, s2, corr1, corr2):
     f1 = pygame.font.Font(None, 30)
     text1 = f1.render(f'Игрок 1: {s1} монет', True,
@@ -399,8 +431,8 @@ def start_the_game():
     global num_level
     global number_1
     global number_2
-    score_1 = 0
-    score_2 = 0
+    global score_1
+    global score_2
     start_music.stop()
     pygame.init()
     size = width, height = 800, 800
@@ -422,12 +454,17 @@ def start_the_game():
             if endgame == 0:
                 num_level += 1
             endgame = 0
-            score_1 = 0
-            score_2 = 0
             if num_level == 1 or num_level == 2:
                 player_1 = Player_1(100, 800 - 130)
                 player_2 = Player_2(130, 800 - 130)
             elif num_level == 3:
+                # base structure
+                base_record()
+                connection = sqlite3.connect("databazze.sqlite")
+                query = 'SELECT * FROM data'
+                res = connection.cursor().execute(query).fetchall()
+                print(res)
+                base_clear()
                 win_game(score_1, score_2)
             else:
                 player_1 = Player_1(100, 800 - 130)
@@ -444,9 +481,6 @@ def start_the_game():
         if pygame.sprite.spritecollide(player_2, coin_sprites, True):
             score_2 += 1
         coin_screen(score_1, score_2, [50, 50], [585, 50])
-        # if endgame != 0:
-            # score_1 = 0
-            # score_2 = 0
         coin_sprites.draw(screen)
         player_1.update()
         player_2.update()
@@ -507,7 +541,8 @@ main_theme.set_background_color_opacity(0.0)
 menu = pygame_menu.Menu('Добро пожаловать', 400, 300,
                         theme=main_theme)
 
-menu.add.text_input('Имя: ', default='User')
+username = menu.add.text_input('имя:', default='User_1')
+username2 = menu.add.text_input('имя:', default='User_2')
 menu.add.button(' Об игре', about_function)
 menu.add.button('Начать игру', start_the_game)
 running = True
