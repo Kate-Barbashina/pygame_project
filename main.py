@@ -458,7 +458,25 @@ def about_function():
                 flag = False
         if flag:
             window.fill((0, 0, 0))
-            window.blit(pygame.transform.scale(animation_set[i // 12], (800,800)), (0, 0))
+            window.blit(pygame.transform.scale(animation_set[i // 12], (750, 750)), (0, 0))
+            intro_text = ['Наши герои летели на свои планету',
+                        'Но на их корабли возникли неполадки и',
+                        'пришлось совершить экстренное приземления на неизвестную планету.',
+                        '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                        'К сожалению, при приземлении наши герои вылетели из корабля.',
+                        'Нужно помочь им добраться до своего коробля преодолев несколько уровней',
+                        'Не забывайте собирать монетки, которые выпали из корабля,',
+                        'Иначе герои вернутся домой бедными((']
+            font = pygame.font.SysFont('consolas', 19)
+            text_coord = 10
+            for line in intro_text:
+                string_rendered = font.render(line, 1, pygame.Color('white'))
+                intro_rect = string_rendered.get_rect()
+                text_coord += 10
+                intro_rect.top = text_coord
+                intro_rect.x = 10
+                text_coord += intro_rect.height
+                screen.blit(string_rendered, intro_rect)
             i += 1
             if i == 60:
                 i = 0
