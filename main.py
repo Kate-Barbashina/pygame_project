@@ -118,26 +118,36 @@ def win_game(s1, s2):
                 print('Анимация в процессе рисования')
         if not flag:
             if s1 + s2 == 10:
-                f1 = pygame.font.Font(None, 30)
-                text0 = f1.render('Поздравляю, вы собрали все монеты!', True, 'white')
-                f1 = pygame.font.Font(None, 30)
-                text_0 = f1.render('Герои вернутся на свою планету крутыми', True, 'white')
+                intro_text = ['', '', '', '', '', 'Поздравляю, вы собрали все монеты!',
+                              'Герои вернутся на свою планету крутыми']
             else:
-                f1 = pygame.font.Font(None, 30)
-                text0 = f1.render('Вы не смогли собрать все монеты', True, 'white')
-                f1 = pygame.font.Font(None, 30)
-                text_0 = f1.render('Герои в печчали, теперь они бедные', True, 'white')
-            screen.blit(text0, (700, 20))
-            screen.blit(text_0, (700, 30))
-            f1 = pygame.font.Font(None, 30)
-            text1 = f1.render(f'Игрок 1 набрал {s1} монет', True,
-                              'white')
-            f1 = pygame.font.Font(None, 30)
-            text2 = f1.render(f'Игрок 2: набрал {s2} монет', True,
-                              'white')
-            screen.blit(text1, (10, 50))
-            screen.blit(text2, (10, 60))
-            screen.blit(pygame.transform.scale(finish, (800, 800)), (0, 0))
+                intro_text = ['', '', '', '', '', 'Вы не смогли собрать все монеты',
+                              'Герои в печчали, теперь они бедные']
+
+            font = pygame.font.SysFont('consolas', 20)
+            text_coord = 700
+            for line in intro_text:
+                string_rendered = font.render(line, 1, pygame.Color('white'))
+                intro_rect = string_rendered.get_rect()
+                text_coord += 10
+                intro_rect.top = text_coord
+                intro_rect.x = 10
+                text_coord += intro_rect.height
+                screen.blit(string_rendered, intro_rect)
+
+            text = ['', '', '', '', '', f'Игрок 1 набрал {s1} монет',
+                    f'Игрок 2: набрал {s2} монет']
+            font = pygame.font.SysFont('consolas', 20)
+            text_coord = 10
+            for line in text:
+                string_rendered = font.render(line, 1, pygame.Color('white'))
+                intro_rect = string_rendered.get_rect()
+                text_coord += 10
+                intro_rect.top = text_coord
+                intro_rect.x = 10
+                text_coord += intro_rect.height
+                screen.blit(string_rendered, intro_rect)
+
         else:
             pass
         clock.tick(fps)
