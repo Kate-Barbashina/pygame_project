@@ -115,7 +115,6 @@ def win_game(s1, s2):
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 flag = True
-                print('Анимация в процессе рисования')
         if not flag:
             if s1 + s2 == 10:
                 intro_text = ['', '', '', '', '', 'Поздравляю, вы собрали все монеты!',
