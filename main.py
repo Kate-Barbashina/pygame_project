@@ -165,7 +165,6 @@ def win_game(s1, s2):
 
 
 
-
 class Player_1:
     def __init__(self, x, y):
         self.img = pygame.transform.scale(player_1_image, (45, 80))
