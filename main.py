@@ -15,6 +15,7 @@ fon = pygame.image.load('data/fon.jpg')
 # variables
 fps = 30
 sprite_size = 50
+coin_number = 17
 number_1 = 0
 num_level = 1
 number_2 = 0
@@ -23,7 +24,6 @@ died_1 = 0
 died_2 = 0
 score_1 = 0
 score_2 = 0
-
 
 # music
 start_music = pygame.mixer.Sound('data/song-for-game.mp3')
@@ -119,9 +119,8 @@ def win_game(s1, s2):
                 sys.exit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 flag = True
-                print('Анимация в процессе рисования')
         if not flag:
-            if s1 + s2 == 10:
+            if s1 + s2 == coin_number:
                 intro_text = ['', '', '', '', '', 'Поздравляю, вы собрали все монеты!',
                               'Герои вернутся на свою планету крутыми']
             else:
@@ -387,9 +386,6 @@ level = Level(num_level)
 
 
 def base_record():
-    #self.connection = sqlite3.connect("databaze.sqlite")
-    #query = 'SELECT * FROM data'
-    #self.res = self.connection.cursor().execute(query).fetchall()
     user1 = username.get_value()
     user2 = username2.get_value()
     with sqlite3.connect('databazze.sqlite') as datab:
@@ -405,6 +401,7 @@ def base_record():
         cursor.execute(query1)
         cursor.execute(query2)
         datab.commit()
+
 
 def base_clear():
     connection_2 = sqlite3.connect("databazze.sqlite")
@@ -457,7 +454,7 @@ def start_the_game():
             if num_level == 1 or num_level == 2:
                 player_1 = Player_1(100, 800 - 130)
                 player_2 = Player_2(130, 800 - 130)
-            elif num_level == 3:
+            elif num_level == 4:
                 # base structure
                 base_record()
                 connection = sqlite3.connect("databazze.sqlite")
@@ -507,13 +504,13 @@ def about_function():
             window.fill((0, 0, 0))
             window.blit(pygame.transform.scale(animation_set[i // 12], (750, 750)), (0, 0))
             intro_text = ['Наши герои летели на свои планету',
-                        'Но на их корабли возникли неполадки и',
-                        'пришлось совершить экстренное приземления на неизвестную планету.',
-                        '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-                        'К сожалению, при приземлении наши герои вылетели из корабля.',
-                        'Нужно помочь им добраться до своего коробля преодолев несколько уровней',
-                        'Не забывайте собирать монетки, которые выпали из корабля,',
-                        'Иначе герои вернутся домой бедными((']
+                          'Но на их корабли возникли неполадки и',
+                          'пришлось совершить экстренное приземления на неизвестную планету.',
+                          '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+                          'К сожалению, при приземлении наши герои вылетели из корабля.',
+                          'Нужно помочь им добраться до своего коробля преодолев несколько уровней',
+                          'Не забывайте собирать монетки, которые выпали из корабля,',
+                          'Иначе герои вернутся домой бедными((']
             font = pygame.font.SysFont('consolas', 19)
             text_coord = 10
             for line in intro_text:
