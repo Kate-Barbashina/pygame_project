@@ -99,10 +99,49 @@ def lose_game(n):
     print(1)
 
 
-def win_game():
-    print('12334')
+def win_game(s1, s2):
     global endgame
-    endgame = 1
+    endgame = -1
+    pygame.init()
+    size = width, height = 800, 800
+    screen = pygame.display.set_mode(size)
+    running = True
+    finish = load_image('win.jpg')
+    flag = False
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                flag = True
+                print('Анимация в процессе рисования')
+        if not flag:
+            if s1 + s2 == 10:
+                f1 = pygame.font.Font(None, 30)
+                text0 = f1.render('Поздравляю, вы собрали все монеты!', True, 'white')
+                f1 = pygame.font.Font(None, 30)
+                text_0 = f1.render('Герои вернутся на свою планету крутыми', True, 'white')
+            else:
+                f1 = pygame.font.Font(None, 30)
+                text0 = f1.render('Вы не смогли собрать все монеты', True, 'white')
+                f1 = pygame.font.Font(None, 30)
+                text_0 = f1.render('Герои в печчали, теперь они бедные', True, 'white')
+            screen.blit(text0, (700, 20))
+            screen.blit(text_0, (700, 30))
+            f1 = pygame.font.Font(None, 30)
+            text1 = f1.render(f'Игрок 1 набрал {s1} монет', True,
+                              'white')
+            f1 = pygame.font.Font(None, 30)
+            text2 = f1.render(f'Игрок 2: набрал {s2} монет', True,
+                              'white')
+            screen.blit(text1, (10, 50))
+            screen.blit(text2, (10, 60))
+            screen.blit(pygame.transform.scale(finish, (800, 800)), (0, 0))
+        else:
+            pass
+        clock.tick(fps)
+        pygame.display.flip()
 
 
 class Player_1:
@@ -375,9 +414,12 @@ def start_the_game():
             if num_level == 1:
                 player_1 = Player_1(100, 800 - 130)
                 player_2 = Player_2(130, 800 - 130)
+            elif num_level == 3:
+                win_game(score_1, score_2)
             else:
                 player_1 = Player_1(100, 800 - 130)
                 player_2 = Player_2(660, 800 - 130)
+
             level = Level(num_level)
             number_1 = 0
             number_2 = 0
