@@ -100,18 +100,21 @@ def lose_game(n):
         clock.tick(fps)
         screen.blit(lose_tr, (0, 0))
         pygame.display.flip()
-    print(1)
 
 
 def win_game(s1, s2):
     global endgame
-    endgame = 1
+    endgame = -1
     pygame.init()
     size = width, height = 800, 800
     screen = pygame.display.set_mode(size)
     running = True
-    finish = load_image('win.jpg')
+    screen.blit(pygame.transform.scale(load_image('win.jpg'), (800, 800)), (0, 0))
     flag = False
+    i = 0
+    clock = pygame.time.Clock()
+    animation_set = [pygame.image.load(f"animation_2/{i}.jpg") for i in range(1, 13)]
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -120,12 +123,12 @@ def win_game(s1, s2):
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 flag = True
         if not flag:
-            if s1 + s2 == coin_number:
+            if s1 + s2 == 17:
                 intro_text = ['', '', '', '', '', 'Поздравляю, вы собрали все монеты!',
                               'Герои вернутся на свою планету крутыми']
             else:
                 intro_text = ['', '', '', '', '', 'Вы не смогли собрать все монеты',
-                              'Герои в печчали, теперь они бедные']
+                              'Герои в печали, теперь они бедные']
 
             font = pygame.font.SysFont('consolas', 20)
             text_coord = 700
@@ -151,16 +154,16 @@ def win_game(s1, s2):
                 text_coord += intro_rect.height
                 screen.blit(string_rendered, intro_rect)
         else:
-            animation_set = [pygame.image.load(f"animation_2/{i}.jpg") for i in range(1, 13)]
-            i = 0
             screen.fill((0, 0, 0))
-            screen.blit(pygame.transform.scale(animation_set[i // 12], (750, 750)), (0, 0))
+            screen.blit(pygame.transform.scale(animation_set[i // 12], (800, 800)), (0, 0))
             i += 1
-            if i == 60:
+            if i == 130:
                 i = 0
 
         clock.tick(fps)
         pygame.display.flip()
+
+
 
 
 class Player_1:
