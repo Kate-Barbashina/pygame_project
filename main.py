@@ -56,10 +56,10 @@ def load_image(name, colorkey=None):
 # loading of images
 player_1_image = load_image('pl.png')
 player_2_image = load_image('player_2.png')
-crystal_image = load_image('kristal.png')
+crystal_image = load_image('crystal.png')
 water_image = load_image('water.png')
-img_c = pygame.transform.scale(crystal_image, (45, 80))
-img_w = pygame.transform.scale(water_image, (4, 80))
+img_c = pygame.transform.scale(crystal_image, (35, 90))
+img_w = pygame.transform.scale(water_image, (45, 80))
 
 coin_sprites = pygame.sprite.Group()
 
@@ -136,7 +136,6 @@ class Player_1:
             self.speed_y = 10
         dy += self.speed_y
 
-        fl = 0
         # checking
         # collision with water
         for tile in level.water_list:
@@ -148,10 +147,8 @@ class Player_1:
             # in x coordinates
             if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
                 if tile[0] == img_c:
-                    fl = 1
                     number_1 = 1
-                else:
-                    dx = 0
+                dx = 0
             # in y coordinates
             if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
                 # jumping
@@ -213,7 +210,6 @@ class Player_2:
             self.speed_y = 10
         dy += self.speed_y
 
-        fl = 0
         # checking
         # collision with water
         for tile in level.water_list:
@@ -225,10 +221,8 @@ class Player_2:
             # in x coordinates
             if tile[1].colliderect(self.rect.x + dx, self.rect.y, self.width, self.height):
                 if tile[0] == img_c:
-                    fl = 1
                     number_2 = 1
-                else:
-                    dx = 0
+                dx = 0
             # in y coordinates
             if tile[1].colliderect(self.rect.x, self.rect.y + dy, self.width, self.height):
                 # jumping
@@ -363,7 +357,7 @@ def start_the_game():
             score_1 = 0
             score_2 = 0
             num_level += 1
-            if num_level == 1:
+            if num_level == 1 or num_level == 2:
                 player_1 = Player_1(100, 800 - 130)
                 player_2 = Player_2(130, 800 - 130)
             else:
