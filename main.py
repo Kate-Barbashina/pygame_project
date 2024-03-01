@@ -147,9 +147,15 @@ def win_game(s1, s2):
                 intro_rect.x = 10
                 text_coord += intro_rect.height
                 screen.blit(string_rendered, intro_rect)
-
         else:
-            pass
+            animation_set = [pygame.image.load(f"animation_2/{i}.jpg") for i in range(1, 13)]
+            i = 0
+            screen.fill((0, 0, 0))
+            screen.blit(pygame.transform.scale(animation_set[i // 12], (750, 750)), (0, 0))
+            i += 1
+            if i == 60:
+                i = 0
+
         clock.tick(fps)
         pygame.display.flip()
 
