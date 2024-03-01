@@ -91,6 +91,7 @@ def lose_game(n):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if rect.collidepoint(event.pos):
+                    endgame = 0
                     start_the_game()
         lose_tr = pygame.transform.scale(lose, (800, 800))
         clock.tick(fps)
@@ -256,6 +257,8 @@ class Level:
     def __init__(self, n):
         self.cloud = []
         self.water_list = []
+        if n > 3:
+            n = n - 3
         backgr_image = load_image(f'backgr{n}.jpg')
         self.background_image = pygame.transform.scale(backgr_image, (800, 800))
         block_image = load_image(f'dirt{n}.png')
@@ -362,10 +365,11 @@ def start_the_game():
 
         if number_1 == 1 and number_2 == 1:
             # start new level
+            if endgame == 0:
+                num_level += 1
             endgame = 0
             score_1 = 0
             score_2 = 0
-            num_level += 1
             if num_level == 1 or num_level == 2:
                 player_1 = Player_1(100, 800 - 130)
                 player_2 = Player_2(130, 800 - 130)
@@ -383,9 +387,9 @@ def start_the_game():
         if pygame.sprite.spritecollide(player_2, coin_sprites, True):
             score_2 += 1
         coin_screen(score_1, score_2, [50, 50], [585, 50])
-        if endgame != 0:
-            score_1 = 0
-            score_2 = 0
+        # if endgame != 0:
+            # score_1 = 0
+            # score_2 = 0
         coin_sprites.draw(screen)
         player_1.update()
         player_2.update()
