@@ -316,6 +316,7 @@ class Level:
     def __init__(self, n):
         self.cloud = []
         self.water_list = []
+        leve = load_level(f'level{n}.txt')
         if n > 3:
             n = n - 3
         backgr_image = load_image(f'backgr{n}.jpg')
@@ -326,7 +327,6 @@ class Level:
         img = pygame.transform.scale(dirt_image, (sprite_size, sprite_size))
         water_image = load_image('water.png')
         img_w = pygame.transform.scale(water_image, (sprite_size, sprite_size))
-        leve = load_level(f'level{n}.txt')
         r = 0
         for y in range(len(leve)):
             c = 0
@@ -456,7 +456,13 @@ def start_the_game():
             if num_level == 1 or num_level == 2:
                 player_1 = Player_1(100, 800 - 130)
                 player_2 = Player_2(130, 800 - 130)
+            elif num_level == 3:
+                player_1 = Player_1(100, 800 - 130)
+                player_2 = Player_2(660, 800 - 130)
             elif num_level == 4:
+                player_1 = Player_1(250, 750)
+                player_2 = Player_2(500, 750)
+            elif num_level == 5:
                 # base structure
                 base_record()
                 connection = sqlite3.connect("databazze.sqlite")
@@ -466,8 +472,7 @@ def start_the_game():
                 base_clear()
                 win_game(score_1, score_2)
             else:
-                player_1 = Player_1(100, 800 - 130)
-                player_2 = Player_2(660, 800 - 130)
+                pass
 
             level = Level(num_level)
             number_1 = 0
