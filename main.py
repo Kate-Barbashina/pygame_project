@@ -17,7 +17,7 @@ fps = 30
 sprite_size = 50
 coin_number = 17
 number_1 = 0
-num_level = 5
+num_level = 1
 number_2 = 0
 endgame = 0  # it means that game in process; 1 - you passed level or won game; -1 - game over
 died_1 = 0
@@ -123,7 +123,7 @@ def win_game(s1, s2, die_1, die_2):
             if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 flag = True
         if not flag:
-            if s1 + s2 == 17:
+            if s1 + s2 == 4:
                 intro_text = ['', '', '', '', '', 'Поздравляю, вы собрали все монеты!',
                               'Герои вернутся на свою планету крутыми']
             else:
@@ -131,7 +131,7 @@ def win_game(s1, s2, die_1, die_2):
                               'Герои в печали, теперь они бедные']
 
             font = pygame.font.SysFont('consolas', 20)
-            text_coord = 700
+            text_coord = 300
             for line in intro_text:
                 string_rendered = font.render(line, 1, pygame.Color('white'))
                 intro_rect = string_rendered.get_rect()
@@ -142,8 +142,8 @@ def win_game(s1, s2, die_1, die_2):
                 screen.blit(string_rendered, intro_rect)
             user1 = username.get_value()
             user2 = username2.get_value()
-            text = ['', '', '', '', '', f'{user1} набрал {s1} монет и умер {die_1}',
-                    f'{user2} набрал {s2} монет и умер {die_2}']
+            text = ['', '', '', '', '', f'{user1} набрал {s1} монет и умер {die_1} раза',
+                    f'{user2} набрал {s2} монет и умер {die_2} раза']
             font = pygame.font.SysFont('consolas', 20)
             text_coord = 10
             for line in text:
@@ -320,6 +320,7 @@ class Level:
         leve = load_level(f'level{n}.txt')
         if n > 3:
             n = n - 3
+        print(n)
         backgr_image = load_image(f'backgr{n}.jpg')
         self.background_image = pygame.transform.scale(backgr_image, (800, 800))
         block_image = load_image(f'dirt{n}.png')
@@ -443,10 +444,19 @@ def start_the_game():
     screen = pygame.display.set_mode(size)
     background_image = level.background_image
 
-    #player_1 = Player_1(100, 800 - 130)
-    #player_2 = Player_2(130, 800 - 130)
-    player_1 = Player_1(50, 700)
-    player_2 = Player_2(700, 100)
+
+    if num_level == 1 or num_level == 2:
+        player_1 = Player_1(100, 800 - 130)
+        player_2 = Player_2(130, 800 - 130)
+    elif num_level == 3:
+        player_1 = Player_1(100, 800 - 130)
+        player_2 = Player_2(660, 800 - 130)
+    elif num_level == 4:
+        player_1 = Player_1(250, 750)
+        player_2 = Player_2(500, 750)
+    elif num_level == 5:
+        player_1 = Player_1(50, 700)
+        player_2 = Player_2(700, 100)
 
     running = True
     while running:
@@ -472,7 +482,7 @@ def start_the_game():
                 player_2 = Player_2(500, 750)
             elif num_level == 5:
                 player_1 = Player_1(50, 700)
-                player_2 = Player_2(750, 100)
+                player_2 = Player_2(700, 100)
             elif num_level == 6:
                 # base structure
                 base_record()
@@ -485,12 +495,14 @@ def start_the_game():
             else:
                 pass
 
+            print('*****')
             level = Level(num_level)
             number_1 = 0
             number_2 = 0
         clock.tick(fps)
         screen.blit(background_image, (0, 0))
         level.draw()
+        # print('.')
         if pygame.sprite.spritecollide(player_1, coin_sprites, True):
             score_1 += 1
         if pygame.sprite.spritecollide(player_2, coin_sprites, True):
