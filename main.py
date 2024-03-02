@@ -551,8 +551,8 @@ main_theme.set_background_color_opacity(0.0)
 menu = pygame_menu.Menu('Добро пожаловать', 400, 300,
                         theme=main_theme)
 
-username = menu.add.text_input('имя:', default='User_1')
-username2 = menu.add.text_input('имя:', default='User_2')
+username = menu.add.text_input('имя:', default='Игрок_1')
+username2 = menu.add.text_input('имя:', default='Игрок_2')
 menu.add.button(' Об игре', about_function)
 menu.add.button('Начать игру', start_the_game)
 running = True
