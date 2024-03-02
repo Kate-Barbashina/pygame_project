@@ -360,12 +360,6 @@ class Level:
                     tile = (img_w, imgw_rect)
                     self.water_list.append(tile)
                     self.cloud.append(tile)
-                # if leve[y][x] == '#':
-                # imgw1_rect = img.get_rect()
-                # imgw1_rect.x = c * 50
-                # imgw1_rect.y = r * 50
-                # tile = (img_w1, imgw1_rect)
-                # self.cloud.append(tile)
                 c += 1
             r += 1
 
