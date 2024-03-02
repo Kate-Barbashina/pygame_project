@@ -17,7 +17,7 @@ fps = 30
 sprite_size = 50
 coin_number = 17
 number_1 = 0
-num_level = 1
+num_level = 5
 number_2 = 0
 endgame = 0  # it means that game in process; 1 - you passed level or won game; -1 - game over
 died_1 = 0
@@ -102,7 +102,7 @@ def lose_game(n):
         pygame.display.flip()
 
 
-def win_game(s1, s2):
+def win_game(s1, s2, die_1, die_2):
     global endgame
     endgame = -1
     pygame.init()
@@ -140,9 +140,10 @@ def win_game(s1, s2):
                 intro_rect.x = 10
                 text_coord += intro_rect.height
                 screen.blit(string_rendered, intro_rect)
-
-            text = ['', '', '', '', '', f'Игрок 1 набрал {s1} монет',
-                    f'Игрок 2: набрал {s2} монет']
+            user1 = username.get_value()
+            user2 = username2.get_value()
+            text = ['', '', '', '', '', f'{user1} набрал {s1} монет и умер {die_1}',
+                    f'{user2} набрал {s2} монет и умер {die_2}']
             font = pygame.font.SysFont('consolas', 20)
             text_coord = 10
             for line in text:
@@ -414,11 +415,13 @@ def base_clear():
 
 
 def coin_screen(s1, s2, corr1, corr2):
+    user1 = username.get_value()
+    user2 = username2.get_value()
     f1 = pygame.font.Font(None, 30)
-    text1 = f1.render(f'Игрок 1: {s1} монет', True,
+    text1 = f1.render(f'{user1}: {s1} монет', True,
                       'white')
     f1 = pygame.font.Font(None, 30)
-    text2 = f1.render(f'Игрок 2: {s2} монет', True,
+    text2 = f1.render(f'{user2}: {s2} монет', True,
                       'white')
     screen.blit(text1, (corr1[0], corr1[1]))
     screen.blit(text2, (corr2[0], corr2[1]))
@@ -432,16 +435,18 @@ def start_the_game():
     global number_2
     global score_1
     global score_2
+    global died_1
+    global died_2
     start_music.stop()
     pygame.init()
     size = width, height = 800, 800
     screen = pygame.display.set_mode(size)
     background_image = level.background_image
 
-    player_1 = Player_1(100, 800 - 130)
-    player_2 = Player_2(130, 800 - 130)
-    #player_1 = Player_1(50, 700)
-    #player_2 = Player_2(700, 100)
+    #player_1 = Player_1(100, 800 - 130)
+    #player_2 = Player_2(130, 800 - 130)
+    player_1 = Player_1(50, 700)
+    player_2 = Player_2(700, 100)
 
     running = True
     while running:
@@ -465,10 +470,10 @@ def start_the_game():
             elif num_level == 4:
                 player_1 = Player_1(250, 750)
                 player_2 = Player_2(500, 750)
-            #elif num_level == 5:
-                #player_1 = Player_1(50, 700)
-                #player_2 = Player_2(750, 100)
             elif num_level == 5:
+                player_1 = Player_1(50, 700)
+                player_2 = Player_2(750, 100)
+            elif num_level == 6:
                 # base structure
                 base_record()
                 connection = sqlite3.connect("databazze.sqlite")
@@ -476,7 +481,7 @@ def start_the_game():
                 res = connection.cursor().execute(query).fetchall()
                 print(res)
                 base_clear()
-                win_game(score_1, score_2)
+                win_game(score_1, score_2, died_1, died_2)
             else:
                 pass
 
@@ -551,8 +556,8 @@ main_theme.set_background_color_opacity(0.0)
 menu = pygame_menu.Menu('Добро пожаловать', 400, 300,
                         theme=main_theme)
 
-username = menu.add.text_input('имя:', default='User_1')
-username2 = menu.add.text_input('имя:', default='User_2')
+username = menu.add.text_input('имя:', default='Игрок_1')
+username2 = menu.add.text_input('имя:', default='Игрок_2')
 menu.add.button(' Об игре', about_function)
 menu.add.button('Начать игру', start_the_game)
 running = True
