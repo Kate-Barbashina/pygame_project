@@ -440,6 +440,8 @@ def start_the_game():
 
     player_1 = Player_1(100, 800 - 130)
     player_2 = Player_2(130, 800 - 130)
+    #player_1 = Player_1(50, 700)
+    #player_2 = Player_2(700, 100)
 
     running = True
     while running:
@@ -447,6 +449,7 @@ def start_the_game():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+        background_image = level.background_image
 
         if number_1 == 1 and number_2 == 1:
             # start new level
@@ -462,6 +465,9 @@ def start_the_game():
             elif num_level == 4:
                 player_1 = Player_1(250, 750)
                 player_2 = Player_2(500, 750)
+            #elif num_level == 5:
+                #player_1 = Player_1(50, 700)
+                #player_2 = Player_2(750, 100)
             elif num_level == 5:
                 # base structure
                 base_record()
