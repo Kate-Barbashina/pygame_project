@@ -16,22 +16,22 @@ fon = pygame.image.load('data/fon.jpg')
 fps = 30
 sprite_size = 50
 coin_number = 17
-number_1 = 0
+number_1 = 0  # флаг, дошел ли игрок 1 до кристала
 num_level = 1
-number_2 = 0
+number_2 = 0  # флаг, дошел ли игрок 2 до кристала
 endgame = 0  # it means that game in process; 1 - you passed level or won game; -1 - game over
-died_1 = 0
-died_2 = 0
+died_1 = 0  # смерти игрока 1
+died_2 = 0  # смерти игрока 2
 score_1 = 0
 score_2 = 0
 
 # music
-start_music = pygame.mixer.Sound('data/song-for-game.mp3')
+start_music = pygame.mixer.Sound('data/sounds/song-for-game.mp3')
 start_music.set_volume(0.5)
 start_music.play()
-jump_sound = pygame.mixer.Sound('data/sound.wav')
+jump_sound = pygame.mixer.Sound('data/sounds/sound.wav')
 jump_sound.set_volume(0.4)
-jump_sound2 = pygame.mixer.Sound('data/sound2.wav')
+jump_sound2 = pygame.mixer.Sound('data/sounds/sound2.wav')
 jump_sound2.set_volume(0.3)
 
 
@@ -60,8 +60,6 @@ def load_image(name, colorkey=None):
 
 
 # loading of images
-player_1_image = load_image('pl.png')
-player_2_image = load_image('player_2.png')
 crystal_image = load_image('crystal.png')
 water_image = load_image('water.png')
 img_c = pygame.transform.scale(crystal_image, (35, 90))
@@ -71,7 +69,7 @@ coin_sprites = pygame.sprite.Group()
 
 
 # some methods
-def lose_game(n):
+def lose_game(n):  # когда игрок падает в лаву
     global endgame
     global died_1
     global died_2
@@ -113,7 +111,7 @@ def win_game(s1, s2, die_1, die_2):
     flag = False
     i = 0
     clock = pygame.time.Clock()
-    animation_set = [pygame.image.load(f"animation_2/{i}.jpg") for i in range(1, 13)]
+    animation_set = [pygame.image.load(f"data/animation_2/{i}.jpg") for i in range(1, 13)]
 
     while running:
         for event in pygame.event.get():
@@ -165,11 +163,11 @@ def win_game(s1, s2, die_1, die_2):
         pygame.display.flip()
 
 
-
 class Player_1:
     def __init__(self, x, y):
+        player_1_image = load_image('player/pl.png')
         self.img = pygame.transform.scale(player_1_image, (45, 80))
-        player_image_n = load_image('pln.png')
+        player_image_n = load_image('player/pln.png')
         self.img_n = pygame.transform.scale(player_image_n, (45, 80))
         self.rect = self.img.get_rect()
         self.rect.x = x
@@ -241,9 +239,9 @@ class Player_1:
 
 class Player_2:
     def __init__(self, x, y):
-        player_image = load_image('player2.png')
+        player_image = load_image('player/player2.png')
         self.img = pygame.transform.scale(player_image, (45, 80))
-        player_image_n = load_image('playern.png')
+        player_image_n = load_image('player/playern.png')
         self.img_n = pygame.transform.scale(player_image_n, (45, 80))
         self.rect = self.img.get_rect()
         self.rect.x = x
@@ -317,15 +315,15 @@ class Level:
     def __init__(self, n):
         self.cloud = []
         self.water_list = []
-        leve = load_level(f'level{n}.txt')
+        leve = load_level(f'levels/level{n}.txt')
         if n > 3:
             n = n - 3
         print(n)
-        backgr_image = load_image(f'backgr{n}.jpg')
+        backgr_image = load_image(f'backgr/backgr{n}.jpg')
         self.background_image = pygame.transform.scale(backgr_image, (800, 800))
-        block_image = load_image(f'dirt{n}.png')
+        block_image = load_image(f'dirt/dirt{n}.png')
         img1 = pygame.transform.scale(block_image, (sprite_size, sprite_size))
-        dirt_image = load_image(f'block{n}.png')
+        dirt_image = load_image(f'block/block{n}.png')
         img = pygame.transform.scale(dirt_image, (sprite_size, sprite_size))
         water_image = load_image('water.png')
         img_w = pygame.transform.scale(water_image, (sprite_size, sprite_size))
@@ -438,7 +436,6 @@ def start_the_game():
     screen = pygame.display.set_mode(size)
     background_image = level.background_image
 
-
     if num_level == 1 or num_level == 2:
         player_1 = Player_1(100, 800 - 130)
         player_2 = Player_2(130, 800 - 130)
@@ -477,19 +474,16 @@ def start_the_game():
             elif num_level == 5:
                 player_1 = Player_1(50, 700)
                 player_2 = Player_2(700, 100)
-            elif num_level == 6:
-                # base structure
-                base_record()
-                connection = sqlite3.connect("databazze.sqlite")
-                query = 'SELECT * FROM data'
-                res = connection.cursor().execute(query).fetchall()
-                print(res)
-                base_clear()
-                win_game(score_1, score_2, died_1, died_2)
-            else:
-                pass
+        if num_level == 6:
+            # base structure
+            base_record()
+            connection = sqlite3.connect("databazze.sqlite")
+            query = 'SELECT * FROM data'
+            res = connection.cursor().execute(query).fetchall()
+            print(res)
+            base_clear()
+            win_game(score_1, score_2, died_1, died_2)
 
-            print('*****')
             level = Level(num_level)
             number_1 = 0
             number_2 = 0
@@ -510,7 +504,7 @@ def start_the_game():
 
 def about_function():
     # открытие файла txt с описанием правил игры
-    animation_set = [pygame.image.load(f"animation/{i}.jpg") for i in range(1, 6)]
+    animation_set = [pygame.image.load(f"data/animation/{i}.jpg") for i in range(1, 6)]
     window = pygame.display.set_mode((750, 750))
     clock = pygame.time.Clock()
     flag = True
@@ -559,7 +553,7 @@ def about_function():
 
 main_theme = pygame_menu.themes.THEME_SOLARIZED.copy()
 main_theme.set_background_color_opacity(0.0)
-menu = pygame_menu.Menu('Добро пожаловать', 400, 300,
+menu = pygame_menu.Menu('Денежная планета', 400, 300,
                         theme=main_theme)
 
 username = menu.add.text_input('имя:', default='Игрок_1')
